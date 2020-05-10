@@ -31,6 +31,13 @@ variable "zones" {
             provider2_addresses = set(string)
             provider1_proxied = string
         }))
+        cname_records = map(object({
+            name  = string
+            ttl   = number
+            provider1_cname = string
+            provider2_cname = string
+            provider1_proxied = string
+        }))
         mx_records = map(object({
             provider1_name  = string
             provider2_name  = string

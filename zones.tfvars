@@ -18,6 +18,22 @@ zones = {
               provider1_proxied = "true"
             }
         }
+        cname_records = {
+            record_key1 = {
+              name = "cname1"
+              ttl = 1
+              provider1_cname = "other1.example.com"
+              provider2_cname = "other1.local.example.com."
+              provider1_proxied = "true"
+            }
+            record_key2 = {
+              name = "cname2"
+              ttl = 1
+              provider1_cname = "other2.example.com"
+              provider2_cname = "other2.local.example.com."
+              provider1_proxied = "true"
+            }
+        }
         mx_records = {
             record_key1 = {
                 provider1_name: "@"

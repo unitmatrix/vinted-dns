@@ -22,6 +22,25 @@ locals {
         for record_data in local.cf_a_records_list: record_data.unique_key => record_data
     }
     
+    # create a flat list of objects for Cloudflare resources from CNAME records
+    cf_cname_records_list = flatten([
+        for zone_key, zone_data in var.zones: [
+            for record_key, record_data in zone_data.cname_records: {
+                zone_id: zone_data.provider1_zone_id
+                name: record_data.name
+                value: record_data.provider1_cname
+                ttl: record_data.ttl
+                proxied: record_data.provider1_proxied
+                unique_key: join("-", [record_key, trimsuffix(zone_key, ".")])
+            }
+        ]
+    ])
+    
+    # project to a map as required by for_each
+    cf_cname_records_map = {
+        for record_data in local.cf_cname_records_list: record_data.unique_key => record_data
+    }
+    
     # create a flat list of objects for Cloudflare resources from MX records
     cf_mx_records_list = flatten([
         for zone_key, zone_data in var.zones: [
@@ -61,6 +80,24 @@ locals {
         for record_data in local.b_a_records_set: record_data.unique_key => record_data
     }
     
+    # create a flat list of objects for Bind resources from CNAME records
+    b_cname_records_list = flatten([
+        for zone_key, zone_data in var.zones: [
+            for record_key, record_data in zone_data.cname_records: {
+                zone: zone_data.provider2_zone
+                name: record_data.name
+                cname: record_data.provider2_cname
+                ttl: record_data.ttl
+                unique_key: join("-", [record_key, trimsuffix(zone_key, ".")])
+            }
+        ]
+    ])
+    
+    # project to a map as required by for_each
+    b_cname_records_map = {
+        for record_data in local.b_cname_records_list: record_data.unique_key => record_data
+    }
+    
     # create a flat list of objects for Bind resources from MX records
     b_mx_records_set = flatten([
         for zone_key, zone_data in var.zones: [
@@ -90,6 +127,16 @@ resource cloudflare_record "a_record" {
         proxied = each.value.proxied
 }
 
+resource cloudflare_record "cname_record" {
+    for_each = local.cf_cname_records_map
+        zone_id = each.value.zone_id
+        name = each.value.name
+        value = each.value.value
+        type = "CNAME"
+        ttl = each.value.ttl
+        proxied = each.value.proxied
+}
+
 resource cloudflare_record "mx_record" {
     for_each = local.cf_mx_records_map
         zone_id = each.value.zone_id
@@ -105,6 +152,14 @@ resource dns_a_record_set "a_record" {
         zone = each.value.zone
         name = each.value.name
         addresses = each.value.addresses
+        ttl = each.value.ttl
+}
+
+resource dns_cname_record "cname_record" {
+    for_each = local.b_cname_records_map
+        zone = each.value.zone
+        name = each.value.name
+        cname = each.value.cname
         ttl = each.value.ttl
 }
 
