@@ -101,58 +101,20 @@ $hosts_array = json_decode(file_get_contents($hosts_file)) or die("ERROR importi
 foreach($hosts_array as $d)
 {
     // Convert Cloudflare records
-    foreach ($d as $t => $data)
+
+    // Cloudflare A records
+    if (isset($d->a))
     {
-        if ($t == 'origin') // example.com.
+        foreach($d->a as $record)
         {
-            $origin = $data;
-        }
-        else if ($t == 'a')
-        {
-            // Cloudflare A records
-            foreach($data as $record)
+            foreach($record->ip_cloudflare as $ip)
             {
                 $out = sprintf($cf_a_r_t,
                     // generate unique terraform resource name
-                    strtolower(str_replace('.', '-', $record->name . '.' . rtrim($origin, '.'))), // name-example-com
-                    $record->cloudflare_zone_id,
+                    strtolower(str_replace('.', '-', 'a-' . $ip . '-' . $record->name . '-' . rtrim($d->origin, '.'))), // name-example-com
+                    $d->cloudflare_zone_id,
                     $record->name,
-                    $record->ip_cloudflare,
-                    $record->ttl,
-                    $record->proxied ? 'true' : 'false'
-                );
-                $cf_out .= $out;
-            }
-        }
-        else if ($t == 'mx')
-        {
-            // Cloudflare MX records
-            $i = 0;
-            foreach($data as $record)
-            {
-                $out = sprintf($cf_mx_r_t, 
-                    // generate unique terraform resource name
-                    strtolower(str_replace('.', '-', 'mx-'. ++$i . '.' . rtrim($origin, '.'))), // mx-0-example-com
-                    $record->cloudflare_zone_id,
-                    $record->name_cloudflare,
-                    $record->host_cloudflare,
-                    $record->ttl,
-                    $record->preference
-                );
-                $cf_out .= $out;
-            }
-        }
-        else if ($t == 'cname')
-        {
-            // Cloudflare CNAME records
-            foreach($data as $record)
-            {
-                $out = sprintf($cf_cname_r_t,
-                    // generate unique terraform resource name
-                    strtolower(str_replace('.', '-', $record->name . '.' . rtrim($origin, '.'))), // cname-example-com
-                    $record->cloudflare_zone_id,
-                    $record->name,
-                    $record->cname_cloudflare,
+                    $ip,
                     $record->ttl,
                     $record->proxied ? 'true' : 'false'
                 );
@@ -161,66 +123,98 @@ foreach($hosts_array as $d)
         }
     }
     
-    // Convert BIND records
-    foreach ($d as $t => $data)
+    if (isset($d->mx))
     {
-        if ($t == 'origin')
+        // Cloudflare MX records
+        $i = 0;
+        foreach($d->mx as $record)
         {
-            $origin = $data; // example.com.
-        }
-        else if ($t == 'a')
-        {
-            // BIND A records
-            foreach($data as $record)
-            {
-                $out = sprintf($b_a_r_t,
-                    // generate unique terraform resource name
-                    strtolower(str_replace('.', '-', $record->name . '.' . rtrim($origin, '.'))), // name-example-com
-                    $record->zone,
-                    $record->name,
-                    $record->ip_bind,
-                    $record->ttl
-                );
-                $b_out .= $out;
-            }
-        }
-        else if ($t == 'mx')
-        {
-            // BIND MX records
-            $mxs = '';
-            foreach($data as $record)
-            {
-                $mxs .= sprintf($mx_t, 
-                    $record->host_bind,
-                    $record->preference
-                );
-            }
-            
-            $out = sprintf($b_mx_r_t,
+            $out = sprintf($cf_mx_r_t, 
                 // generate unique terraform resource name
-                strtolower(str_replace('.', '-', 'mx' . '.' . rtrim($origin, '.'))), // mx-0-example-com
-                $record->zone,
-                $record->name_bind ? sprintf('name = "%s"', $record->name_bind) : '', // only add if not empty
+                strtolower(str_replace('.', '-', 'mx-'. ++$i . '-' . rtrim($d->origin, '.'))), // mx-0-example-com
+                $d->cloudflare_zone_id,
+                $record->name_cloudflare,
+                $record->host_cloudflare,
                 $record->ttl,
-                $mxs
+                $record->preference
+            );
+            $cf_out .= $out;
+        }
+    }
+    
+    if (isset($d->cname))
+    {
+        // Cloudflare CNAME records
+        foreach($d->cname as $record)
+        {
+            $out = sprintf($cf_cname_r_t,
+                // generate unique terraform resource name
+                strtolower(str_replace('.', '-', 'cname-' . $record->name . '-' . rtrim($d->origin, '.'))), // cname-example-com
+                $d->cloudflare_zone_id,
+                $record->name,
+                $record->cname_cloudflare,
+                $record->ttl,
+                $record->proxied ? 'true' : 'false'
+            );
+            $cf_out .= $out;
+        }
+    }
+    
+    // Convert BIND records
+    if (isset($d->a))
+    {
+        // BIND A records
+        foreach($d->a as $record)
+        {
+            $out = sprintf($b_a_r_t,
+                // generate unique terraform resource name
+                strtolower(str_replace('.', '-', 'a-' . $record->name . '-' . rtrim($d->origin, '.'))), // name-example-com
+                $record->zone,
+                $record->name,
+                implode(',', $record->ip_bind),
+                $record->ttl
             );
             $b_out .= $out;
         }
-        else if ($t == 'cname')
+    }
+    
+    if (isset($d->mx))
+    {
+        // BIND MX records
+        $mxs = '';
+        foreach($d->mx as $record)
         {
-            // BIND CNAME records
-            foreach($data as $record)
-            {
-              $out = sprintf($b_cname_r_t,
-                  // generate unique terraform resource name
-                  strtolower(str_replace('.', '-', $record->name . '.' . rtrim($origin, '.'))), // cname-example-com
-                  $record->zone,
-                  $record->name,
-                  $record->cname_bind,
-                  $record->ttl
-              );
-              $b_out .= $out;
-            }
+            $mxs .= sprintf($mx_t, 
+                $record->host_bind,
+                $record->preference
+            );
+        }
+        
+        $out = sprintf($b_mx_r_t,
+            // generate unique terraform resource name
+            strtolower(str_replace('.', '-', 'mx-' . ($record->name_bind ? $record->name_bind . '-' : '') . rtrim($d->origin, '.'))), // mx-0-example-com
+            $record->zone,
+            $record->name_bind ? sprintf('name = "%s"', $record->name_bind) : '', // only add if not empty
+            $record->ttl,
+            $mxs
+        );
+        $b_out .= $out;
+    }
+    
+    if (isset($d->cname))
+    {
+        // BIND CNAME records
+        foreach($d->cname as $record)
+        {
+            $out = sprintf($b_cname_r_t,
+                // generate unique terraform resource name
+                strtolower(str_replace('.', '-', 'cname-' . $record->name . '-' . rtrim($d->origin, '.'))), // cname-example-com
+                $record->zone,
+                $record->name,
+                $record->cname_bind,
+                $record->ttl
+            );
+            $b_out .= $out;
         }
     }
 }

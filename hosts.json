@@ -1,6 +1,7 @@
 [
   {
     "origin": "TEAMVINTED.COM.",
+    "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515",
     "ttl": 3600,
     "soa": {
         "mname": "NS1.TEAMVINTED.COM.",
@@ -16,20 +17,20 @@
         { "host": "NS2.TEAMVINTED.COM." }
     ],
     "a": [
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name": "a1", "ip_cloudflare": "104.17.26.195", "ip_bind": "127.0.0.1", "ttl": 1, "proxied": true, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name": "a2", "ip_cloudflare": "104.17.26.196", "ip_bind": "127.0.0.2", "ttl": 1, "proxied": true, "zone": "teamvinted.com." }
+        { "name": "a1", "ip_cloudflare": [ "104.17.26.195", "104.17.26.197" ], "ip_bind": [ "127.0.0.1", "127.0.0.3" ], "ttl": 1, "proxied": true, "zone": "teamvinted.com." },
+        { "name": "a2", "ip_cloudflare": [ "104.17.26.196", "104.17.26.198" ], "ip_bind": [ "127.0.0.2", "127.0.0.4" ], "ttl": 1, "proxied": true, "zone": "teamvinted.com." }
     ],
     "cname": [
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name": "cname1", "cname_cloudflare": "other1.example.com", "cname_bind": "other1.teamvinted.com.", "ttl": 1, "proxied": true, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name": "cname2", "cname_cloudflare": "other1.example.com", "cname_bind": "other1.teamvinted.com.", "ttl": 1, "proxied": true, "zone": "teamvinted.com." }
+        { "name": "cname1", "cname_cloudflare": "other1.example.com", "cname_bind": "other1.teamvinted.com.", "ttl": 1, "proxied": false, "zone": "teamvinted.com." },
+        { "name": "cname2", "cname_cloudflare": "other1.example.com", "cname_bind": "other1.teamvinted.com.", "ttl": 1, "proxied": false, "zone": "teamvinted.com." }
     ],
-    "mx":[
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 10, "host_cloudflare": "alt4.aspmx.l.google.com", "host_bind": "alt4.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 10, "host_cloudflare": "alt3.aspmx.l.google.com", "host_bind": "alt3.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 15, "host_cloudflare": "t4ps3zx7dkai6lyuayrgbj5wvq3bhjg74ottnoxdai3yc2pwvena.mx-verification.google.com", "host_bind": "t4ps3zx7dkai6lyuayrgbj5wvq3bhjg74ottnoxdai3yc2pwvena.mx-verification.google.com.", "ttl": 1, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 5, "host_cloudflare": "alt2.aspmx.l.google.com", "host_bind": "alt2.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 5, "host_cloudflare": "alt1.aspmx.l.google.com", "host_bind": "alt1.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
-        { "cloudflare_zone_id": "b0da52d77c310d5a747b05da9c9b9515", "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 1, "host_cloudflare": "aspmx.l.google.com", "host_bind": "aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." }
+    "mx": [
+        { "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 10, "host_cloudflare": "alt4.aspmx.l.google.com", "host_bind": "alt4.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
+        { "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 10, "host_cloudflare": "alt3.aspmx.l.google.com", "host_bind": "alt3.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
+        { "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 15, "host_cloudflare": "t4ps3zx7dkai6lyuayrgbj5wvq3bhjg74ottnoxdai3yc2pwvena.mx-verification.google.com", "host_bind": "t4ps3zx7dkai6lyuayrgbj5wvq3bhjg74ottnoxdai3yc2pwvena.mx-verification.google.com.", "ttl": 1, "zone": "teamvinted.com." },
+        { "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 5, "host_cloudflare": "alt2.aspmx.l.google.com", "host_bind": "alt2.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
+        { "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 5, "host_cloudflare": "alt1.aspmx.l.google.com", "host_bind": "alt1.aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." },
+        { "name_cloudflare": "teamvinted.com", "name_bind": "", "preference": 1, "host_cloudflare": "aspmx.l.google.com", "host_bind": "aspmx.l.google.com.", "ttl": 1, "zone": "teamvinted.com." }
     ]
   }
 ]
