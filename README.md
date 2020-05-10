@@ -6,20 +6,22 @@ This tool allows to provision DNS records to Cloudflare and local Bind instance 
 ## How to run
 ### Setup
 
-You will need the following data to begin: **Cloudflare account ID**, **Cloudflare API access token**, **DNS rndc key name**, **key alorithm** and **secret**. Put this sensitive data as environment variables in a **.source** file as shown below:
+Clone git repo:
 
-    #!/bin/bash
-    
-    export TF_VAR_cloudflare_api_token='sample_token'
-    export TF_VAR_cloudflare_account_id='sample_id'
-    
-    export TF_VAR_dns_key_name='sample_rndc_key_name.'
-    export TF_VAR_dns_key_algorithm='sample_key_algorithm' // hmac-md5
-    export TF_VAR_dns_key_secret='sample_key_secret'
+    $ git clone https://github.com/unitmatrix/vinted-dns.git && cd vinted-dns
 
+You will need the following data to begin: **Cloudflare account ID**, **Cloudflare API access token**, **DNS rndc key name**, **key alorithm** and **secret**. Put this sensitive data as environment variables in a **secret.tfvars** file as shown below:
+
+    cloudflare_api_token="sample_token"
+    cloudflare_account_id="sample_id"
+    
+    dns_key_name="sample_rndc_key_name."
+    dns_key_algorithm="sample_key_algorithm"
+    dns_key_secret="sample_key_secret"
+    
 Secure file permissions:
 
-    $ chmod 0600 .secret
+    $ chmod 0600 secret.tfvars
 
 Start a local BIND server instance locally: 
 
@@ -29,7 +31,7 @@ Run docker instance:
 
     docker run --name bind -d --restart=always --publish 53:53/tcp --publish 53:53/udp --publish 10000:10000/tcp --publish 953:953/tcp --volume /srv/docker/bind:/data   sameersbn/bind:9.11.3-20200507
 
- Port 10000 is for the webmin admin tool. Access it via https://localhost:1000 using with *root*/*password*, create your zone and setup rndc key. Make sure to include the following policy for your zone:
+ Port 10000 is for the webmin admin tool. Access it via https://localhost:1000 with *root*/*password*, create your zone and setup rndc key. Make sure to include the following policy for your zone:
 
      update-policy {
         grant rndc-key zonesub any;
@@ -47,10 +49,6 @@ Convert hosts.json file to terraform configuration files:
 
     php convert.php
     
-Set your terraform environment variables:
-
-    $ . .secrets
-
 Run tests to validate generated terraform configuration:
 
     $ ./test.sh
@@ -61,13 +59,13 @@ Initialize terraform:
 
 Review terraform plan:
 
-    $ terraform plan
+    $ terraform plan -var-file=secret.tfvars
 
 Apply terraform configuration:
 
-    $ terraform apply
+    $ terraform apply -var-file=secret.tfvars
 
-Verify your global and local DNS records:
+Verify your global and local DNS records have updated successfully:
 
     $ dig a a1.example.com. 
     ;; ANSWER SECTION:
