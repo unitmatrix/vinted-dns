@@ -49,7 +49,7 @@ Run docker instance:
 so terraform is able to update your records. More details: [Using rndc](https://www-uxsup.csx.cam.ac.uk/pub/doc/redhat/redhat7.3/rhl-rg-en-7.3/s1-bind-rndc.html)  and [sameersbn/bind](https://github.com/sameersbn/docker-bind)
 
 ### Usage
-Edit your zones file [zones.tfvars](https://github.com/unitmatrix/vinted-dns/blob/master/zones.tfvars) to update your DNS records as needed. File format is self-explanatory, variable names starting with *provider_X* (*ex. provider1_addresses*) will be applied to Cloudflare while those starting with *provider2_* (ex. *provider2_mxs*) will be applied to Bind instance only.
+Edit your zones file [zones.tfvars](https://github.com/unitmatrix/vinted-dns/blob/master/zones.tfvars) to update your DNS records as needed. File format is self-explanatory, variable names starting with *providerX_* (*ex. provider1_addresses*) will be applied to Cloudflare while those starting with *provider2_* (ex. *provider2_mxs*) will be applied to Bind instance only.
 
 Example of A record for www domain name:
 
